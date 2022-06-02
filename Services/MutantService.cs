@@ -29,12 +29,11 @@ namespace Felipe_ML.Services
                 if (sequencesFound < 2) sequencesFound += findSequenceVertical(dna);
                 if (sequencesFound < 2) sequencesFound += findSequenceDiagonal(dna);
                 dnaIsMutant = sequencesFound >= 2;
-                saveDna(dna , dnaIsMutant );
+                saveDna(dna, dnaIsMutant);
                 return dnaIsMutant;
             }
             catch (Exception ex)
             {
-
                 throw new Exception(ex.Message);
             }
         }
@@ -71,38 +70,6 @@ namespace Felipe_ML.Services
                 throw new Exception("dna is invalid");
             }
         }
-
-        private int findSequenceByRows(string row)
-        {
-            int numberOfMatchesToFind = 4;
-            int sequencesFound = 0;
-            int numberLoops = row.Length / numberOfMatchesToFind + 1;
-            for (int i = 1; i < numberLoops; i++)
-            {
-                string sequence = getSequenceByFour(i, row);
-                if (checkIfLetterAreSame("A", sequence)) sequencesFound++;
-                if (checkIfLetterAreSame("T", sequence)) sequencesFound++;
-                if (checkIfLetterAreSame("C", sequence)) sequencesFound++;
-                if (checkIfLetterAreSame("G", sequence)) sequencesFound++;
-            }
-            return sequencesFound;
-        }
-
-        public string getSequenceByFour(int actualLoop, string sequence)
-        {
-            int numberOfMatchesToFind = 4;
-            int finalString = actualLoop * numberOfMatchesToFind;
-            int startOfString = finalString - 4;
-            return sequence.Substring(startOfString, finalString - startOfString);
-        }
-
-        public bool checkIfLetterAreSame(string letterToCompare, string sequence)
-        {
-            int numberForBeSequence = 4;
-            int countEqualsLetters = sequence.Count(x => x == char.Parse(letterToCompare));
-            return countEqualsLetters == numberForBeSequence;
-        }
-
         public int findSequencesHorizontal(string[] dna)
         {
             int sequencesFound = 0;
@@ -153,9 +120,41 @@ namespace Felipe_ML.Services
             return sequencesFound;
         }
 
-        private void saveDna(string[] dna,bool isMutant)
+        private int findSequenceByRows(string row)
         {
-            _dataPersistenceService.saveDna(new Dna{
+            int numberOfMatchesToFind = 4;
+            int sequencesFound = 0;
+            int numberLoops = row.Length / numberOfMatchesToFind + 1;
+            for (int i = 1; i < numberLoops; i++)
+            {
+                string sequence = getSequenceByFour(i, row);
+                if (checkIfLetterAreSame("A", sequence)) sequencesFound++;
+                if (checkIfLetterAreSame("T", sequence)) sequencesFound++;
+                if (checkIfLetterAreSame("C", sequence)) sequencesFound++;
+                if (checkIfLetterAreSame("G", sequence)) sequencesFound++;
+            }
+            return sequencesFound;
+        }
+
+        public string getSequenceByFour(int actualLoop, string sequence)
+        {
+            int numberOfMatchesToFind = 4;
+            int finalString = actualLoop * numberOfMatchesToFind;
+            int startOfString = finalString - 4;
+            return sequence.Substring(startOfString, finalString - startOfString);
+        }
+
+        public bool checkIfLetterAreSame(string letterToCompare, string sequence)
+        {
+            int numberForBeSequence = 4;
+            int countEqualsLetters = sequence.Count(x => x == char.Parse(letterToCompare));
+            return countEqualsLetters == numberForBeSequence;
+        }
+
+        private void saveDna(string[] dna, bool isMutant)
+        {
+            _dataPersistenceService.saveDna(new Dna
+            {
                 DnaSequence = string.Concat(dna).ToUpper(),
                 IsHuman = !isMutant,
                 IsMutant = isMutant
