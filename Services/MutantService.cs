@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using Felipe_ML.Domain;
+using Felipe_ML.Models;
 using Microsoft.Extensions.Logging;
 
 namespace Felipe_ML.Services
@@ -10,28 +11,26 @@ namespace Felipe_ML.Services
     public class MutantService : IMutant
     {
         private readonly ILogger<MutantService> _logger;
+        public IDataPersistence _dataPersistenceService { get; }
 
-        public MutantService(ILogger<MutantService> logger)
+        public MutantService(ILogger<MutantService> logger, IDataPersistence dataPersistenceService)
         {
+            _dataPersistenceService = dataPersistenceService;
             _logger = logger;
         }
         public bool isMutant(string[] dna)
         {
             try
             {
+                bool dnaIsMutant;
                 int sequencesFound = 0;
                 checkIfDnaIsValid(dna);
                 sequencesFound += findSequencesHorizontal(dna);
                 if (sequencesFound < 2) sequencesFound += findSequenceVertical(dna);
                 if (sequencesFound < 2) sequencesFound += findSequenceDiagonal(dna);
-                if (sequencesFound >= 2)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                dnaIsMutant = sequencesFound >= 2;
+                saveDna(dna , dnaIsMutant );
+                return dnaIsMutant;
             }
             catch (Exception ex)
             {
@@ -152,6 +151,15 @@ namespace Felipe_ML.Services
                 sequencesFound += findSequenceByRows(row.ToString());
             }
             return sequencesFound;
+        }
+
+        private void saveDna(string[] dna,bool isMutant)
+        {
+            _dataPersistenceService.saveDna(new Dna{
+                DnaSequence = string.Concat(dna).ToUpper(),
+                IsHuman = !isMutant,
+                IsMutant = isMutant
+            });
         }
 
     }
