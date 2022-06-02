@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Felipe_ML.Domain;
+using Felipe_ML.Models;
 using Felipe_ML.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -34,7 +35,10 @@ namespace Felipe_ML
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Felipe_ML", Version = "v1" });
             });
+            services.AddScoped<PruebaMLContext,PruebaMLContext>();
             services.AddScoped<IMutant,MutantService>();
+            services.AddScoped<IDataPersistence,SqlPersistenceDataService>();
+            services.AddScoped<IStats,StatsService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
