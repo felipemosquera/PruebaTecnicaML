@@ -1,0 +1,8 @@
+{
+  "runtimeOptions": {
+    "additionalProbingPaths": [
+      "C:\\Users\\MOSQUERA\\.dotnet\\store\\|arch|\\|tfm|",
+      "C:\\Users\\MOSQUERA\\.nuget\\packages"
+    ]
+  }
+}
